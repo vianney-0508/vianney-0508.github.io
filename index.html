@@ -75,6 +75,8 @@
       .button-secondary { color: var(--blue); border: 1px solid var(--blue); }
 
       .tile { min-height: 560px; padding: 80px 24px; display: grid; place-items: center; text-align: center; }
+      .reveal { opacity: 0; transform: translateY(26px); transition: opacity 680ms ease, transform 680ms ease; }
+      .reveal.is-visible { opacity: 1; transform: translateY(0); }
       .tile-inner { width: min(100%, 820px); }
       .hero .tile-inner { width: min(100%, 1180px); display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr); align-items: center; gap: clamp(40px, 7vw, 104px); text-align: left; }
       .hero-copy .lead { margin-left: 0; margin-right: 0; }
@@ -120,6 +122,11 @@
 
       footer { padding: 40px 24px; color: #6e6e73; background: var(--parchment); font-size: 12px; text-align: center; }
 
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .reveal { opacity: 1; transform: none; transition: none; }
+      }
+
       @media (max-width: 640px) {
         .nav-content, .subnav-content { width: min(100% - 28px, 980px); }
         .nav-links { display: none; }
@@ -145,6 +152,7 @@
         <div class="nav-links">
           <a href="#about">소개</a>
           <a href="#interests">관심사</a>
+          <a href="projects.html">Projects</a>
           <a href="#contact">연락처</a>
         </div>
       </div>
@@ -158,7 +166,7 @@
     </nav>
 
     <main>
-      <section class="tile light hero" aria-labelledby="home-title">
+      <section class="tile light hero reveal is-visible" aria-labelledby="home-title">
         <div class="tile-inner">
           <div class="hero-copy">
             <p class="tile-kicker">PERSONAL PAGE</p>
@@ -176,7 +184,7 @@
         </div>
       </section>
 
-      <section class="tile dark" id="about" aria-labelledby="about-title">
+      <section class="tile dark reveal" id="about" aria-labelledby="about-title">
         <div class="tile-inner">
           <p class="tile-kicker">ABOUT</p>
           <h2 id="about-title">반갑습니다.</h2>
@@ -184,7 +192,7 @@
         </div>
       </section>
 
-      <section class="tile parchment" id="history" aria-labelledby="history-title">
+      <section class="tile parchment reveal" id="history" aria-labelledby="history-title">
         <div class="tile-inner">
           <p class="tile-kicker">HISTORY</p>
           <h2 id="history-title">커리어를 그려갑니다.</h2>
@@ -195,7 +203,7 @@
         </div>
       </section>
 
-      <section class="tile parchment" id="interests" aria-labelledby="interests-title">
+      <section class="tile parchment reveal" id="interests" aria-labelledby="interests-title">
         <div class="tile-inner">
           <p class="tile-kicker">INTERESTS</p>
           <h2 id="interests-title">관심을 따라갑니다.</h2>
@@ -208,7 +216,7 @@
         </div>
       </section>
 
-      <section class="tile dark" id="contact" aria-labelledby="contact-title">
+      <section class="tile dark reveal" id="contact" aria-labelledby="contact-title">
         <div class="tile-inner">
           <p class="tile-kicker">CONTACT</p>
           <h2 id="contact-title">편하게 연락하세요.</h2>
@@ -228,5 +236,23 @@
     </main>
 
     <footer>© 2026 신유찬. All rights reserved.</footer>
+    <script>
+      const revealItems = document.querySelectorAll('.reveal:not(.is-visible)');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!reduceMotion && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.16 });
+        revealItems.forEach((item) => observer.observe(item));
+      } else {
+        revealItems.forEach((item) => item.classList.add('is-visible'));
+      }
+    </script>
   </body>
 </html>
